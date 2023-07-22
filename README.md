@@ -16,11 +16,17 @@ mqtt = MQTT::Client.new('test.mosquitto.org', 1883)
 # mqtt.key = IO.read('private.pem.key')
 mqtt.connect
 
-mqtt.publish("topic", 'message')
+mqtt.publish("tx-topic", 'message')
 
-# mqtt.get blocks until a message is received.
-mqtt.subscribe("topic")
-topic, message = mqtt.get
+# Subscribe to a topic with a callback as a block.
+mqtt.subscribe("rx-topic") do |message|
+  puts "Message from rx-topic: #{message}"
+end
+
+# Message receive is event driven, so main loop can do whatever.
+loop do
+  sleep 1
+end
 
 mqtt.disconnect
 ```
